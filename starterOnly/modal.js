@@ -29,14 +29,16 @@ function closeModal() {
   modalbg.style.display = 'none';
 }
 
-// DOM elements form
-const prenom = document.getElementById("first")
-const nom = document.getElementById("last")
-const email = document.getElementById("email")
-const dateDeNaissance = document.getElementById("birthdate")
-const nbTournois = document.getElementById("quantity")
-const localisations = document.getElementsByName("location")
-const conditionsGenerales = document.getElementById("checkbox1")
+// valider prénom
+function validerPrenom (champ) {
+  // on retire les espaces inutiles
+  const prenom = champ.value.trim()
+
+  // pas vide et pas moins de 2 caractères
+  if (prenom === '' || prenom.length < 2) {
+    afficherMessageErreur(champ, "Veuillez entrer 2 caractères ou plus.")
+  }
+}
 
 // valider nom de famille
 function validerNom (champ) {
@@ -45,51 +47,50 @@ function validerNom (champ) {
   
   // pas vide et pas moins de 2 caractères
   if (nom === '' || nom.length < 2) {
-    throw new Error("Le nom doit comporter au moins 2 caractères et ne peut pas être vide.")
-  }
-}
-
-// valider prénom
-function validerPrenom (champ) {
-  // on retire les espaces inutiles
-  const prenom = champ.value.trim()
-
-  // pas vide et pas moins de 2 caractères
-  if (prenom === '' || prenom.length < 2) {
-    throw new Error("Le prénom doit comporter au moins 2 caractères et ne peut pas être vide.")
+    afficherMessageErreur(champ, "Veuillez entrer 2 caractères ou plus.")
   }
 }
 
 // valider l'email
 function validerEmail(email) {
   // regex pour valider l'email
-  var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  let regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   
   // test de l'email avec le regex
-  if (!regex.test(email)) {
-    throw new Error("L'adresse e-mail n'est pas valide.")
+  if (!regex.test(email.value)) {
+    afficherMessageErreur(email, "L'adresse e-mail n'est pas valide.")
   }
 }
 
-// valider la quantité
-function estNombrePositifOuNul(valeur) {
-  // on convertit la valeur en number
-  var nombre = Number(valeur);
-  
-  // si pas nombre ou pas positif
-  if (isNaN(nombre) || nombre < 0) {
-    throw new Error("Le nombre de tournois doit être un nombre.")
+// valider la date de naissance
+function validerDateDeNaissance(date) {
+  // on le créer en format Date
+  const dateSaisie = new Date(date.value);
+
+  // on vérifie le format (NaN) ou si elle est supérieur à maintenant
+  if (isNaN(dateSaisie.getTime())) {
+    afficherMessageErreur(date, "La date ne peut pas être vide.")
+  } else if (dateSaisie > new Date()) {
+    afficherMessageErreur(date, "La date n'est pas valide.")
+  }
+}
+
+// valider le nombre de tournois
+function validerNombreTournois(champ) {
+  // si le champ est pas rempli
+  if (champ.value === '') {
+    afficherMessageErreur(champ, "Le champ ne peut pas être vide.")
   }
 }
 
 
 // valider si radio est coché
-function validerBoutonRadio(boutionsRadio) {
+function validerLocalisations(localisations) {
   estValide = false
 
-  for (let i = 0; i < boutonsRadio.length; i++) {
+  for (let i = 0; i < localisations.length; i++) {
       // vérification d'un radio coché
-      if (boutonsRadio[i].checked) {
+      if (localisations[i].checked) {
           estValide = true
           break
       }
@@ -97,14 +98,62 @@ function validerBoutonRadio(boutionsRadio) {
 
   // si aucun radio coché
   if (!estValide) {
-    throw new Error("Vous devez choisir au moins un tournoi.")
+    afficherMessageErreur(localisations[0], "Vous devez choisir au moins un tournoi.")
   }
 }
 
 // valider si le check est coché
-function isChecked(check) {
+function validerConditionsGenerales(check) {
   // si pas coché
   if (!check.checked) {
-    throw new Error("Vous devez accepter les conditions d'utilisation.")
+    afficherMessageErreur(check, "Vous devez accepter les conditions d'utilisation.")
   }
+}
+
+// pour réinitialiser les messages d'erreurs du form
+function reinitialiserMessagesErreur() {
+  // on récupère toutes les div.formData
+  let elementsFormData = document.querySelectorAll('.formData');
+  // pour chaque, on retire les attributs
+  elementsFormData.forEach(element => {
+      element.removeAttribute('data-error');
+      element.removeAttribute('data-error-visible');
+  });
+}
+
+// pour afficher le message d'erreur correctement dans le formData
+function afficherMessageErreur(element, message) {
+  // on récupére le div.formData parent
+  let parentElement = element.closest('.formData');
+  // s'il existe, on le modifie pour afficher l'erreur
+  if (parentElement) {
+      parentElement.setAttribute('data-error', message);
+      parentElement.setAttribute('data-error-visible', 'true');
+  }
+}
+
+// DOM elements form
+const prenom = document.getElementById("first")
+const nom = document.getElementById("last")
+const email = document.getElementById("email")
+const dateDeNaissance = document.getElementById("birthdate")
+const nombreTournois = document.getElementById("quantity")
+const localisations = document.getElementsByName("location")
+const conditionsGenerales = document.getElementById("checkbox1")
+
+// fonction principale du form
+function validate(event) {
+  // on empêche le fonctionnement par défaut du form (actualisation)
+  event.preventDefault()
+  // on réinitalise les messages d'erreurs
+  reinitialiserMessagesErreur()
+
+  // on test tout les inputs
+  validerNom(nom)
+  validerPrenom(prenom)
+  validerEmail(email)
+  validerDateDeNaissance(dateDeNaissance)
+  validerNombreTournois(nombreTournois)
+  validerLocalisations(localisations)
+  validerConditionsGenerales(conditionsGenerales)
 }
