@@ -138,7 +138,12 @@ main {
 }
 
 /* Modal form */
-
+#inscriptionValide {
+  display: none;
+  font-size: 32px;
+  padding: 250px 50px;
+  text-align: center;
+}
 .button {
   background: #fe142f;
   margin-top: 0.5em;
