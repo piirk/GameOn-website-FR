@@ -141,7 +141,7 @@ main {
 #inscriptionValide {
   display: none;
   font-size: 32px;
-  padding: 250px 50px;
+  padding: 250px 0;
   text-align: center;
 }
 .button {
