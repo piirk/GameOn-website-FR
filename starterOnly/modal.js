@@ -16,6 +16,7 @@ const modalClose = document.querySelector(".close");
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
+
 // close modal event
 modalClose.addEventListener('click', closeModal);
 
@@ -27,6 +28,8 @@ function launchModal() {
 // close modal form
 function closeModal() {
   modalbg.style.display = 'none';
+  // on réinitialise les messages d'erreurs
+  reinitialiserMessagesErreur()
 }
 
 // valider prénom
@@ -189,6 +192,9 @@ function validate(event) {
 
   // si le form est validé
   if (isValid) {
+    // console.log result
+    console.log(prenom.Value)
+    
     document.getElementById('inscriptionValide').style.display = 'block';
     document.getElementsByName('reserve')[0].style.display = 'none';
   }
