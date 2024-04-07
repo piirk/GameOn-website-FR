@@ -19,7 +19,6 @@ let isFormValid = true
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
-
 // close modal event
 modalClose.addEventListener('click', closeModal);
 
@@ -35,39 +34,17 @@ function closeModal() {
   reinitialiserMessagesErreur()
 }
 
-// valider prénom
-function validerPrenom (champ) {
+// valider string avec regex
+function validerAvecRegex(champ, regex, messageErreur) {
   // on retire les espaces inutiles
-  const prenom = champ.value.trim()
-
-  // pas vide et pas moins de 2 caractères
-  if (prenom === '' || prenom.length < 2) {
-    afficherMessageErreur(champ, "Veuillez entrer 2 caractères ou plus.")
-    isFormValid = false
-  }}
-
-// valider nom de famille
-function validerNom (champ) {
-  // on retire les espaces inutiles
-  const nom = champ.value.trim()
+  const texte = champ.value.trim()
   
-  // pas vide et pas moins de 2 caractères
-  if (nom === '' || nom.length < 2) {
-    afficherMessageErreur(champ, "Veuillez entrer 2 caractères ou plus.")
+  // on test avec le regex en paramètre
+  if (!regex.test(texte)) {
+    afficherMessageErreur(champ, messageErreur)
     isFormValid = false
   }
 }
-
-// valider l'email
-function validerEmail(email) {
-  // regex pour valider l'email
-  let regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-  
-  // test de l'email avec le regex
-  if (!regex.test(email.value)) {
-    afficherMessageErreur(email, "L'adresse e-mail n'est pas valide.")
-    isFormValid = false
-  }}
 
 // valider la date de naissance
 function validerDateDeNaissance(date) {
@@ -83,16 +60,6 @@ function validerDateDeNaissance(date) {
     isFormValid = false
   }
 }
-
-// valider le nombre de tournois
-function validerNombreTournois(champ) {
-  // si le champ est pas rempli
-  if (champ.value === '') {
-    afficherMessageErreur(champ, "Le champ ne peut pas être vide.")
-    isFormValid = false
-  }
-}
-
 
 // valider si radio est coché
 function validerLocalisations(localisations) {
@@ -113,35 +80,34 @@ function validerLocalisations(localisations) {
   }
 }
 
-// valider si le check est coché
+// valider si le check des conditions est coché
 function validerConditionsGenerales(check) {
   // si pas coché
   if (!check.checked) {
     afficherMessageErreur(check, "Vous devez accepter les conditions d'utilisation.")
     isFormValid = false
   }
-  return true
 }
 
 // pour réinitialiser les messages d'erreurs du form
 function reinitialiserMessagesErreur() {
   // on récupère toutes les div.formData
-  let elementsFormData = document.querySelectorAll('.formData');
+  let elementsFormData = document.querySelectorAll('.formData')
   // pour chaque, on retire les attributs
   elementsFormData.forEach(element => {
-      element.removeAttribute('data-error');
-      element.removeAttribute('data-error-visible');
+      element.removeAttribute('data-error')
+      element.removeAttribute('data-error-visible')
   });
 }
 
 // pour afficher le message d'erreur correctement dans le formData
 function afficherMessageErreur(element, message) {
   // on récupére le div.formData parent
-  let parentElement = element.closest('.formData');
+  let parentElement = element.closest('.formData')
   // s'il existe, on le modifie pour afficher l'erreur
   if (parentElement) {
-      parentElement.setAttribute('data-error', message);
-      parentElement.setAttribute('data-error-visible', 'true');
+      parentElement.setAttribute('data-error', message)
+      parentElement.setAttribute('data-error-visible', 'true')
   }
 }
 
@@ -154,27 +120,31 @@ const nombreTournois = document.getElementById("quantity")
 const localisations = document.getElementsByName("location")
 const conditionsGenerales = document.getElementById("checkbox1")
 
+// les regex pour la validation
+const regexPrenomEtNom = /^[a-zA-Z-]{2,}$/
+const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+const regexNombreTournois = /^([0-9]\d*)$/
+
 // fonction principale du form
 function validate(event) {
-  // on empêche le fonctionnement par défaut du form (actualisation)
+  // on empêche le fonctionnement par défaut du formulaire (actualisation)
   event.preventDefault()
-  // on réinitalise les messages d'erreurs
+  // on réinitialise les messages d'erreurs
   reinitialiserMessagesErreur()
+  // on réinitialise isFormValid à true
+  isFormValid = true
 
   // on test tout les inputs
-  validerPrenom(prenom)
-  validerNom(nom)
-  validerEmail(email)
+  validerAvecRegex(prenom, regexPrenomEtNom, "Veuillez entrer 2 caractères ou plus.")
+  validerAvecRegex(nom, regexPrenomEtNom, "Veuillez entrer 2 caractères ou plus.")
+  validerAvecRegex(email, regexEmail, "L'adresse e-mail n'est pas valide.")
   validerDateDeNaissance(dateDeNaissance)
-  validerNombreTournois(nombreTournois)
+  validerAvecRegex(nombreTournois, regexNombreTournois, "Le champ ne peut pas être vide.")
   validerLocalisations(localisations)
   validerConditionsGenerales(conditionsGenerales)
 
   // si le form est validé
   if (isFormValid) {
-    // console.log result
-    console.log(prenom.value)
-
     document.getElementById('inscriptionValide').style.display = 'block';
     document.getElementsByName('reserve')[0].style.display = 'none';
   }
