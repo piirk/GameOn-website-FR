@@ -147,5 +147,21 @@ function validate(event) {
   if (isFormValid) {
     document.getElementById('inscriptionValide').style.display = 'block';
     document.getElementsByName('reserve')[0].style.display = 'none';
+
+    // utilisation des données du form
+    console.log(prenom.value)
+    console.log(nom.value)
+    console.log(email.value)
+    console.log(dateDeNaissance.value)
+    console.log(nombreTournois.value)
+    
+    for (let i = 0; i < localisations.length; i++) {
+      if (localisations[i].checked) {
+          console.log(localisations[i].value)
+          break
+      }
+    }
+
+    console.log(conditionsGenerales.checked)
   }
 }
