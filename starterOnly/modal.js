@@ -13,6 +13,9 @@ const modalBtn = document.querySelectorAll(".modal-btn");
 const formData = document.querySelectorAll(".formData");
 const modalClose = document.querySelector(".close");
 
+// variables globales
+let isFormValid = true
+
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
@@ -40,10 +43,8 @@ function validerPrenom (champ) {
   // pas vide et pas moins de 2 caractères
   if (prenom === '' || prenom.length < 2) {
     afficherMessageErreur(champ, "Veuillez entrer 2 caractères ou plus.")
-    return false
-  }
-  return true
-}
+    isFormValid = false
+  }}
 
 // valider nom de famille
 function validerNom (champ) {
@@ -53,9 +54,8 @@ function validerNom (champ) {
   // pas vide et pas moins de 2 caractères
   if (nom === '' || nom.length < 2) {
     afficherMessageErreur(champ, "Veuillez entrer 2 caractères ou plus.")
-    return false;
+    isFormValid = false
   }
-  return true
 }
 
 // valider l'email
@@ -66,10 +66,8 @@ function validerEmail(email) {
   // test de l'email avec le regex
   if (!regex.test(email.value)) {
     afficherMessageErreur(email, "L'adresse e-mail n'est pas valide.")
-    return false
-  }
-  return true
-}
+    isFormValid = false
+  }}
 
 // valider la date de naissance
 function validerDateDeNaissance(date) {
@@ -79,12 +77,11 @@ function validerDateDeNaissance(date) {
   // on vérifie le format (NaN) ou si elle est supérieur à maintenant
   if (isNaN(dateSaisie.getTime())) {
     afficherMessageErreur(date, "La date ne peut pas être vide.")
-    return false
+    isFormValid = false
   } else if (dateSaisie > new Date()) {
     afficherMessageErreur(date, "La date n'est pas valide.")
-    return false
+    isFormValid = false
   }
-  return true
 }
 
 // valider le nombre de tournois
@@ -92,9 +89,8 @@ function validerNombreTournois(champ) {
   // si le champ est pas rempli
   if (champ.value === '') {
     afficherMessageErreur(champ, "Le champ ne peut pas être vide.")
-    return false
+    isFormValid = false
   }
-  return true
 }
 
 
@@ -113,9 +109,8 @@ function validerLocalisations(localisations) {
   // si aucun radio coché
   if (!estValide) {
     afficherMessageErreur(localisations[0], "Vous devez choisir au moins un tournoi.")
-    return false
+    isFormValid = false
   }
-  return true
 }
 
 // valider si le check est coché
@@ -123,7 +118,7 @@ function validerConditionsGenerales(check) {
   // si pas coché
   if (!check.checked) {
     afficherMessageErreur(check, "Vous devez accepter les conditions d'utilisation.")
-    return false
+    isFormValid = false
   }
   return true
 }
@@ -161,40 +156,25 @@ const conditionsGenerales = document.getElementById("checkbox1")
 
 // fonction principale du form
 function validate(event) {
-  let isValid = true
   // on empêche le fonctionnement par défaut du form (actualisation)
   event.preventDefault()
   // on réinitalise les messages d'erreurs
   reinitialiserMessagesErreur()
 
   // on test tout les inputs
-  if (!validerPrenom(prenom)) {
-    isValid = false
-  }
-  if (!validerNom(nom)) {
-    isValid = false
-  }
-  if (!validerEmail(email)) {
-    isValid = false
-  }
-  if (!validerDateDeNaissance(dateDeNaissance)) {
-    isValid = false
-  }
-  if (!validerNombreTournois(nombreTournois)) {
-    isValid = false
-  }
-  if (!validerLocalisations(localisations)) {
-    isValid = false
-  }
-  if (!validerConditionsGenerales(conditionsGenerales)) {
-    isValid = false
-  }
+  validerPrenom(prenom)
+  validerNom(nom)
+  validerEmail(email)
+  validerDateDeNaissance(dateDeNaissance)
+  validerNombreTournois(nombreTournois)
+  validerLocalisations(localisations)
+  validerConditionsGenerales(conditionsGenerales)
 
   // si le form est validé
-  if (isValid) {
+  if (isFormValid) {
     // console.log result
-    console.log(prenom.Value)
-    
+    console.log(prenom.value)
+
     document.getElementById('inscriptionValide').style.display = 'block';
     document.getElementsByName('reserve')[0].style.display = 'none';
   }
