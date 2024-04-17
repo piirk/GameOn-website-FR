@@ -32,6 +32,9 @@ function closeModal() {
   modalbg.style.display = 'none';
   // on réinitialise les messages d'erreurs
   reinitialiserMessagesErreur()
+  // on remet les displays correctement
+  document.getElementById('inscriptionValide').style.display = 'none';
+  document.getElementsByName('reserve')[0].style.display = 'block';
 }
 
 // valider string avec regex
@@ -163,5 +166,8 @@ function validate(event) {
     }
 
     console.log(conditionsGenerales.checked)
+
+    // on vide le formulaire
+    document.getElementsByName('reserve')[0].reset();
   }
 }
